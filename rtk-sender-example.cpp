@@ -6,6 +6,10 @@
 #include "serial-comms.h"
 #include "driver-interface.h"
 
+#include <mavconn/interface.h>
+#include <mavlink/v2.0/common/mavlink.h>
+#include <mavlink/v2.0/common/gps_rtcm_data.h>
+
 
 int main(int argc, char* argv[])
 {
@@ -24,20 +28,9 @@ int main(int argc, char* argv[])
         return 2;
     }
 
-    mavsdk::Mavsdk mavsdk;
+    auto mav_interface = mavconn::MAVConnInterface::open_url(argv[3], 1, 1); //system_id and component_id is set to 1, but these values are ignored because we send with system_id and component_id set to 0 (broadcast)
 
-    // Required when connecting to a flight controller directly via USB.
-    mavsdk::Mavsdk::Configuration config{mavsdk::Mavsdk::Configuration::UsageType::GroundStation};
-    config.set_always_send_heartbeats(true);
-    mavsdk.set_configuration(config);
-
-    auto connection_result = mavsdk.add_any_connection(argv[3]);
-    if (connection_result != mavsdk::ConnectionResult::Success) {
-        printf("Mavsdk connection failed\n");
-        return 3;
-    }
-
-    DriverInterface driver_interface(serial_comms, mavsdk);
+    DriverInterface driver_interface(serial_comms, mav_interface);
 
     auto driver = std::make_unique<GPSDriverUBX>(
             GPSDriverUBX::Interface::UART,
@@ -61,7 +54,6 @@ int main(int argc, char* argv[])
     }
 
     printf("configure done!\n");
-
 
     while (true) {
         // Keep running, and don't stop on timeout.
