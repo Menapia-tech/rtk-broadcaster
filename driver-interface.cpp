@@ -1,4 +1,5 @@
 #include "driver-interface.h"
+#include <mavconn/mavconn_interface.h>
 #include <iostream>
 
 int DriverInterface::callback_entry(GPSCallbackType type, void* data1, int data2, void* user)
@@ -31,19 +32,12 @@ int DriverInterface::callback(GPSCallbackType type, void* data1, int data2)
 
 void DriverInterface::send_rtcm_data(const uint8_t* data, int data_len)
 {
-    if (!rtk_plugin_) {
-        if (mavsdk_.systems().empty()) {
-            printf("No system available yet\n");
-            return;
-        }
+    mavlink_message_t message;
+    mavlink_gps_rtcm_data_t rtcm_data;
+    rtcm_data.len = data_len;
+    memcpy(rtcm_data.data, data, data_len);
 
-        rtk_plugin_ = std::make_shared<mavsdk::Rtk>(mavsdk_.systems()[0]);
-        telemetry_plugin_ = std::make_shared<mavsdk::Telemetry>(mavsdk_.systems()[0]);
-    }
+    mavlink_msg_gps_rtcm_data_encode(0, 0, &message, &rtcm_data);
 
-    mavsdk::Rtk::RtcmData rtcm_data;
-    rtcm_data.data.insert(rtcm_data.data.end(), data, data + data_len);
-    rtk_plugin_->send_rtcm_data(rtcm_data);
-
-    std::cout << "Fix type: " << telemetry_plugin_->gps_info().fix_type << '\n';
+    mav_interface_->send_message(message);
 }
