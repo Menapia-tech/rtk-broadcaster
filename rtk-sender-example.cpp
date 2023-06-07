@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     if (argc != 4) {
         printf("\n");
         printf("usage: %s <serial device> <baudrate> <mavlink connection>\n", argv[0]);
-        printf("e.g.: %s /dev/ttyUSB0 38400 udp://:14550\n", argv[0]);
+        printf("e.g.: %s /dev/ttyUSB0 38400 udp://:24550\n", argv[0]);
         printf("Note: use baudrate 0 to determine baudrate automatically\n");
         return 1;
     }
