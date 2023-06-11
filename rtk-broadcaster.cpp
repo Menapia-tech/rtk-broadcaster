@@ -37,30 +37,33 @@ int main(int argc, char* argv[])
         return 3;
     }
 
-    // Parse system_ids from command line argument.
-    std::vector<uint8_t> system_ids;
-    std::string system_ids_string(argv[4]);
-    std::stringstream ss(system_ids_string);
+// Parse system_ids from command line argument.
+std::vector<uint8_t> system_ids;
+std::string system_ids_string(argv[4]);
+std::stringstream ss(system_ids_string);
 
-    for (uint8_t i; ss >> i;) {
-        system_ids.push_back(i);
-        if (ss.peek() == ',')
-            ss.ignore();
-    }
+for (uint8_t i; ss >> i;) {
+    system_ids.push_back(static_cast<uint8_t>(i - '0'));  // Convert character to integer
+    if (ss.peek() == ',')
+        ss.ignore();
+}
 
-    // Create a DriverInterface for each system_id.
-    std::vector<std::unique_ptr<DriverInterface>> driver_interfaces;
-    for (const auto& system_id : system_ids) {
-        driver_interfaces.push_back(std::make_unique<DriverInterface>(serial_comms, mavsdk, system_id));
+
+    printf("System ID's:");
+    for (const auto& id : system_ids) {
+        printf(" %d", id);
     }
+    printf("\n");
+
+    DriverInterface driver_interface(serial_comms, mavsdk, system_ids);
 
     auto driver = std::make_unique<GPSDriverUBX>(
             GPSDriverUBX::Interface::UART,
-            &DriverInterface::callback_entry, driver_interfaces[0].get(),
-            &driver_interfaces[0]->gps_pos, &driver_interfaces[0]->sat_info);
+            &DriverInterface::callback_entry, &driver_interface,
+            &driver_interface.gps_pos, &driver_interface.sat_info);
 
-    constexpr auto survey_minimum_m = 0.8;
-    constexpr auto survey_duration_s = 300;
+    constexpr auto survey_minimum_m = 20;//0.8;
+    constexpr auto survey_duration_s = 10;//300;
     driver->setSurveyInSpecs(survey_minimum_m * 10000, survey_duration_s);
 
     GPSHelper::GPSConfig gps_config {};
