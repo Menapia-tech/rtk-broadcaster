@@ -24,8 +24,8 @@ int DriverInterface::callback(GPSCallbackType type, void* data1, int data2)
             return (serial_comms_.set_baudrate(data2) ? 0 : 1);
 
         case GPSCallbackType::gotRTCMMessage:
-            std::cout << "gotRTCMMessage case executed\n";
-            std::cout.flush();
+            // std::cout << "gotRTCMMessage case executed\n";
+            // std::cout.flush();
             send_rtcm_data(static_cast<const uint8_t*>(data1), data2);
             return 0;
 
@@ -66,19 +66,19 @@ int DriverInterface::callback(GPSCallbackType type, void* data1, int data2)
     }
 }
 
-void DriverInterface::print_gps_fix_type(mavsdk::System& system)
-{
-    // Creates telemetry plugin object with the referenced system
-    mavsdk::Telemetry telemetry(system);
+// void DriverInterface::print_gps_fix_type(mavsdk::System& system)
+// {
+//     // Creates telemetry plugin object with the referenced system
+//     mavsdk::Telemetry telemetry(system);
 
-    auto gps_info = telemetry.gps_info();
-    std::cout << "GPS fix type: " << gps_info.fix_type << '\n';
-}
+//     auto gps_info = telemetry.gps_info();
+//     std::cout << "GPS fix type: " << gps_info.fix_type << '\n';
+// }
 
 void DriverInterface::send_rtcm_data(const uint8_t* data, int data_len)
 {
     std::cout << "send_rtcm_data called\n";
-    std::cout.flush();
+    // std::cout.flush();
 
     if (mavsdk_.systems().empty()) {
         std::cout << "No systems available\n";
@@ -102,9 +102,9 @@ void DriverInterface::send_rtcm_data(const uint8_t* data, int data_len)
         mavsdk::Rtk rtk_plugin(*system);
         rtk_plugin.send_rtcm_data(rtcm_data);
 
-        mavsdk::Telemetry telemetry(*system);
-        auto gps_info = telemetry.gps_info();
-        std::cout << "GPS fix type for system with ID " << static_cast<int>(system_id) << ": " << gps_info.fix_type << '\n';
+        // mavsdk::Telemetry telemetry(*system);
+        // auto gps_info = telemetry.gps_info();
+        // std::cout << "GPS fix type for system with ID " << static_cast<int>(system_id) << ": " << gps_info.fix_type << '\n';
     }
 }
 
@@ -112,21 +112,21 @@ void DriverInterface::send_rtcm_data(const uint8_t* data, int data_len)
 
 
 
-std::shared_ptr<mavsdk::System> DriverInterface::find_system_by_id(uint8_t system_id)
-{
-    auto systems = mavsdk_.systems();
+// std::shared_ptr<mavsdk::System> DriverInterface::find_system_by_id(uint8_t system_id)
+// {
+//     auto systems = mavsdk_.systems();
 
-    for (auto& system : systems) {
-        std::cout << "Checking system ID: " << system->get_system_id() << std::endl;
+//     for (auto& system : systems) {
+//         std::cout << "Checking system ID: " << system->get_system_id() << std::endl;
 
-        if (system->get_system_id() == system_id) {
-            std::cout << "Found system ID: " << system->get_system_id() << std::endl;
-            return system;  // Return shared_ptr directly
-        }
-    }
+//         if (system->get_system_id() == system_id) {
+//             std::cout << "Found system ID: " << system->get_system_id() << std::endl;
+//             return system;  // Return shared_ptr directly
+//         }
+//     }
 
-    return nullptr;  // Return nullptr if no matching system is found
-}
+//     return nullptr;  // Return nullptr if no matching system is found
+// }
 
 // mavsdk::System* DriverInterface::find_system_by_id(uint8_t system_id)
 // {

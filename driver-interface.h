@@ -22,9 +22,9 @@ DriverInterface(SerialComms& serial_comms, mavsdk::Mavsdk& mavsdk, const std::ve
     void send_rtcm_data(const uint8_t* data, int data_len);
     // void send_rtcm_data(const uint8_t* data, int data_len, const std::shared_ptr<mavsdk::System>& system);
 
-    void print_gps_fix_type(mavsdk::System& system);
+    // void print_gps_fix_type(mavsdk::System& system);
     // mavsdk::System* find_system_by_id(uint8_t system_id);   
-    std::shared_ptr<mavsdk::System> find_system_by_id(uint8_t system_id);
+    // std::shared_ptr<mavsdk::System> find_system_by_id(uint8_t system_id);
 
 
     // void print_gps_fix_type(const mavsdk::System& system);  // Add this line
