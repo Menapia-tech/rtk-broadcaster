@@ -31,19 +31,31 @@ int DriverInterface::callback(GPSCallbackType type, void* data1, int data2)
 
 void DriverInterface::send_rtcm_data(const uint8_t* data, int data_len)
 {
-    if (!rtk_plugin_) {
-        if (mavsdk_.systems().empty()) {
-            printf("No system available yet\n");
-            return;
-        }
-
-        rtk_plugin_ = std::make_shared<mavsdk::Rtk>(mavsdk_.systems()[0]);
-        telemetry_plugin_ = std::make_shared<mavsdk::Telemetry>(mavsdk_.systems()[0]);
-    }
-
     mavsdk::Rtk::RtcmData rtcm_data;
     rtcm_data.data.insert(rtcm_data.data.end(), data, data + data_len);
-    rtk_plugin_->send_rtcm_data(rtcm_data);
 
-    std::cout << "Fix type: " << telemetry_plugin_->gps_info().fix_type << '\n';
+    for (const auto& system : mavsdk_.systems()) {
+        auto rtk_plugin = std::make_shared<mavsdk::Rtk>(system);
+        rtk_plugin->send_rtcm_data(rtcm_data);
+    }
 }
+
+
+// void DriverInterface::send_rtcm_data(const uint8_t* data, int data_len)
+// {
+//     if (!rtk_plugin_) {
+//         if (mavsdk_.systems().empty()) {
+//             printf("No system available yet\n");
+//             return;
+//         }
+
+//         rtk_plugin_ = std::make_shared<mavsdk::Rtk>(mavsdk_.systems()[0]);
+//         telemetry_plugin_ = std::make_shared<mavsdk::Telemetry>(mavsdk_.systems()[0]);
+//     }
+
+//     mavsdk::Rtk::RtcmData rtcm_data;
+//     rtcm_data.data.insert(rtcm_data.data.end(), data, data + data_len);
+//     rtk_plugin_->send_rtcm_data(rtcm_data);
+
+//     std::cout << "Fix type: " << telemetry_plugin_->gps_info().fix_type << '\n';
+// }

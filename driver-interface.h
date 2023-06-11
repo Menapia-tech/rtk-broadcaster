@@ -11,9 +11,10 @@
 
 class DriverInterface {
 public:
-    DriverInterface(SerialComms& serial_comms, mavsdk::Mavsdk& mavsdk) :
+    DriverInterface(SerialComms& serial_comms, mavsdk::Mavsdk& mavsdk, uint8_t system_id) :
         serial_comms_(serial_comms),
-        mavsdk_(mavsdk) {}
+        mavsdk_(mavsdk),
+        system_id_(system_id) {}
 
     static int callback_entry(GPSCallbackType type, void* data1, int data2, void* user);
 
@@ -27,6 +28,7 @@ public:
 private:
     SerialComms& serial_comms_;
     mavsdk::Mavsdk& mavsdk_;
+    uint8_t system_id_;
     std::shared_ptr<mavsdk::Rtk> rtk_plugin_{};
     std::shared_ptr<mavsdk::Telemetry> telemetry_plugin_{};
 };

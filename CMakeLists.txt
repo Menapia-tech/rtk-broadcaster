@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(rtk-sender-example CXX)
+project(rtk-broadcaster CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(MAVSDK REQUIRED)
 
-add_executable(rtk-sender-example
-    rtk-sender-example.cpp
+add_executable(rtk-broadcaster
+    rtk-broadcaster.cpp
     serial-comms.h
     serial-comms.cpp
     definitions.h
@@ -22,17 +22,17 @@ add_executable(rtk-sender-example
     PX4-GPSDrivers/src/rtcm.cpp
 )
 
-target_compile_options(rtk-sender-example
+target_compile_options(rtk-broadcaster
     PRIVATE
     -Wall
     -Wextra
 )
 
-target_link_libraries(rtk-sender-example
+target_link_libraries(rtk-broadcaster
     MAVSDK::mavsdk
 )
 
-target_include_directories(rtk-sender-example
+target_include_directories(rtk-broadcaster
     PRIVATE
     PX4-GPSDrivers/src/
 )
