@@ -1,6 +1,12 @@
 #include <cstdio>
 #include <memory>
 
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <cstdlib> // For getenv
+#include <yaml-cpp/yaml.h>
+
 #include "PX4-GPSDrivers/src/gps_helper.h"
 #include "PX4-GPSDrivers/src/ubx.h"
 #include "serial-comms.h"
@@ -43,11 +49,46 @@ int main(int argc, char* argv[])
             GPSDriverUBX::Interface::UART,
             &DriverInterface::callback_entry, &driver_interface,
             &driver_interface.gps_pos, &driver_interface.sat_info);
+  
 
-    constexpr auto survey_minimum_m = 0.4;
-    constexpr auto survey_duration_s = 1500;
-    driver->setSurveyInSpecs(survey_minimum_m * 10000, survey_duration_s);
+    // Check to see if a base position has been saved as a yaml file in the user's home directory
+    // If yaml is present, proceed to use the fixed postion data
+    // If not present, perform an RTK survey
 
+    const char* homeDir = getenv("HOME"); // Get the user's home directory
+    if (homeDir) {
+        std::filesystem::path yamlFilePath = std::filesystem::path(homeDir) / "fixed_position.yaml";
+
+        if (std::filesystem::exists(yamlFilePath)) {
+            std::cout << "Found fixed postion YAML - Using fixed coordinates." << std::endl;
+            // Parse the YAML file
+            try {
+                const YAML::Node config = YAML::LoadFile(yamlFilePath.string());
+
+                // Access and assign values, and set base position
+                double latitude = config["latitude"].as<double>(); //[deg]
+                double longitude = config["longitude"].as<double>(); //[deg]
+                float altitude = config["altitude"].as<float>(); //[m]
+                float position_accuracy = config["position_accuracy"].as<float>(); //[mm]
+                driver->setBasePosition(latitude, longitude, altitude, position_accuracy);
+
+            
+            } catch (const YAML::Exception& e) {
+                std::cerr << "Error parsing YAML: " << e.what() << std::endl;
+                return 1;
+            }
+        } else {
+            std::cout << "No fixed postion YAML - Beginning RTK survey." << std::endl;
+            // Set survey paramaters and begin survey
+            constexpr auto survey_minimum_m = 0.4;
+            constexpr auto survey_duration_s = 1500;
+            driver->setSurveyInSpecs(survey_minimum_m * 10000, survey_duration_s);
+        }
+    } else {
+        std::cerr << "Unable to retrieve the user's home directory." << std::endl;
+        return 1;
+    }
+    
 
     GPSHelper::GPSConfig gps_config {};
     // to test if RTCM is not available

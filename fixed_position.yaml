@@ -1,0 +1,4 @@
+latitude: 42.123456  # deg
+longitude: -71.987654  # deg
+altitude: 100.0  # m
+position_accuracy: 1.5  # mm
