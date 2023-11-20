@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(MAVSDK REQUIRED)
-# Find and configure yaml-cpp
 find_package(yaml-cpp REQUIRED)
 
 add_executable(rtk-sender-example
@@ -23,7 +22,6 @@ add_executable(rtk-sender-example
     PX4-GPSDrivers/src/rtcm.h
     PX4-GPSDrivers/src/rtcm.cpp
 )
-
 
 target_compile_options(rtk-sender-example
     PRIVATE

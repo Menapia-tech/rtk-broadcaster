@@ -26,3 +26,15 @@ e.g.: build/rtk-sender-example /dev/ttyUSB0 38400 udp://:14550
 
 ```
 Note: use baudrate 0 to determine baudrate automatically
+
+
+## RTCM Sniffer
+
+Use the rtcm_sniffer.py script to stream and view the RTCM messages in real time. 
+
+RTCM1005 should be streaming if RTK is working correctly.
+
+The position of the RTK base can be checked using the folowing data frames, and converted to LLA.
+"DF025": Point ECEF-X
+"DF026": Point ECEF-Y
+"DF027": Point ECEF-Z
