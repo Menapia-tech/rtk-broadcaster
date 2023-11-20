@@ -28,6 +28,13 @@ e.g.: build/rtk-sender-example /dev/ttyUSB0 38400 udp://:14550
 Note: use baudrate 0 to determine baudrate automatically
 
 
+## Fixed Mode
+
+The RTK sender can survey-in to get a base position, or use a pre-defined fixed base position.
+
+By default, a survey-in (0.4m, 1500s) will be performed, unless there is a file named 'fixed_position.yaml' in the home directory.
+
+
 ## RTCM Sniffer
 
 Use the rtcm_sniffer.py script to stream and view the RTCM messages in real time. 

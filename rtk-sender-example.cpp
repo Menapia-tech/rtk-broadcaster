@@ -50,7 +50,6 @@ int main(int argc, char* argv[])
             &DriverInterface::callback_entry, &driver_interface,
             &driver_interface.gps_pos, &driver_interface.sat_info);
   
-
     // Check to see if a base position has been saved as a yaml file in the user's home directory
     // If yaml is present, proceed to use the fixed postion data
     // If not present, perform an RTK survey
@@ -64,7 +63,6 @@ int main(int argc, char* argv[])
             // Parse the YAML file
             try {
                 const YAML::Node config = YAML::LoadFile(yamlFilePath.string());
-
                 // Access and assign values, and set base position
                 double latitude = config["latitude"].as<double>(); //[deg]
                 double longitude = config["longitude"].as<double>(); //[deg]
